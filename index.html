@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <meta name="theme-color" content="#343a40" />
+    <meta name="theme-color" content="#4285f4">
+    <link rel="stylesheet" href="css/scanner.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <div class="container py-3 border-right" id="menu">
+        <strong>Pengaturan Kamera</strong>
+        <div class="controls mt-1 w-100">
+            <fieldset class="reader-config-group w-100">
+                <label>
+                    <select class="custom-select w-100" name="input-stream_constraints" id="deviceSelection">
+                    </select>
+                </label>
+            </fieldset>
+        </div>
+
+        <a class="nav-link text-dark" href="index.html">
+            Scannner
+        </a>
+
+        <a class="nav-link text-dark" href="hasil.html">
+            Hasil Scan
+        </a>
+
+        <a class="nav-link text-dark" href="cetak.html">
+            Cetak Hasil Scan
+        </a>
+
+        <a class="nav-link text-dark" id="tutupMenu" href="#">
+            Tutup Menu
+        </a>
+
+
+    </div>
+
+    <div class="bg-light" id="app">
+        <header>
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/logo.png" alt="logo" class="logo">
+                </a>
+                <button class="navbar-toggler" type="button" id="btnNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </nav>
+        </header>
+
+        <section id="container" class="container">
+            <div id="interactive" class="viewport">
+                <select name="kurir" id="inputanKurir" class="custom-select" style="width: 85vw">
+                    <option selected value="null">Pilih Kurir</option>
+                    <option value="POS Indonesia">POS Indonesia</option>
+                    <option value="Sicepat">Sicepat</option>
+                    <option value="JNE">JNE</option>
+                    <option value="J&T">J&T</option>
+                    <option value="Tiki">Tiki</option>
+                    <option value="JVL">JVL</option>
+                </select>
+            </div>
+
+            <div id="notifSukses" class="alert alert-success mt-1">
+                <small>
+                    
+                </small>
+            </div>
+
+            <div id="error_already_data" class="alert alert-warning mt-1">
+                <small>
+                    
+                </small>
+            </div>
+
+            <div id="other_error" class="alert alert-danger mt-1">
+                <small>
+                    Terjadi kesalahan pada sistem, silahkan coba lagi!
+                </small>
+            </div>
+ 
+            <div class="mt-1 bg-light" id="riwayatScan">
+                <div>
+                    <strong>Riwayat Scanning</strong>
+
+                    <div class="float-right mr-5 closeRiwayat">
+                        <strong>X</strong>
+                    </div>
+                </div>
+                <div id="result_strip">
+                    <ul class="thumbnails"></ul>
+                </div>
+            </div>
+
+            <fieldset class="input-group fixed-bottom w-100 container bg-white border-top">
+                <button id="cameraStop" class="stop btn btn-danger w-100 my-2">Stop Camera</button>
+                <button id="cameraStart" class="start btn btn-success w-100 my-2">Start Again</button>
+            </fieldset>
+        </section>
+    </div>
+
+    <script src="js/prism.min.js"></script>
+    <script src="js/quagga.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/my.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scanner.js"></script>
+
+
+    <script>
+        // Check authentication
+        $(function () {
+            var session_id = localStorage.getItem('bikermartApp_Session');
+        
+            if(!session_id || session_id !='qZhchP5tsUX6sDVM93BUsp7') {
+                location.href="login.html"
+            }
+        });
+
+        // Detect client connection
+        $(document).ready(function(){$.ajax({type:"GET",data:{key:"Bikermart#2020"},contentType:"application/x-www-form-urlencoded",url:"https://api.bikermart.co.id/v1/qr/cekKoneksi",success:function(e){"ok"==e.status&&200==e.code&&"Bikermart#2020"==e.key?console.log("connected to server"):location.href="noNetwork.html"},error:function(){location.href="noNetwork.html"}})});
+    </script>
+
+    <audio class="d-none" src="audio/beep.mp3" id="beep" type="audio/mp3"></audio>
+</body>
+
+</html>

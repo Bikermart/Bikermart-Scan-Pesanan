@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <style>
+        	/* Coded with love by Mutiullah Samim */
+		body,
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			background: #60a3bc !important;
+		}
+		.user_card {
+			height: 400px;
+			width: 350px;
+			margin-top: auto;
+			margin-bottom: auto;
+			background: #f39c12;
+			position: relative;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			padding: 10px;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			border-radius: 5px;
+
+		}
+		.brand_logo_container {
+			position: absolute;
+			height: 170px;
+			width: 170px;
+			top: -75px;
+			border-radius: 50%;
+			background: #60a3bc;
+			padding: 10px;
+			text-align: center;
+		}
+		.brand_logo {
+			height: 150px;
+			width: 150px;
+			border-radius: 50%;
+			border: 2px solid white;
+		}
+		.form_container {
+			margin-top: 100px;
+		}
+		.login_btn {
+			width: 100%;
+			background: #c0392b !important;
+			color: white !important;
+		}
+		.login_btn:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+		.login_container {
+			padding: 0 2rem;
+		}
+		.input-group-text {
+			background: #c0392b !important;
+			color: white !important;
+			border: 0 !important;
+			border-radius: 0.25rem 0 0 0.25rem !important;
+		}
+		.input_user,
+		.input_pass:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+		.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+			background-color: #c0392b !important;
+		}
+    </style>
+</head>
+
+<body>
+    <div class="container h-100">
+        <div class="d-flex justify-content-center h-100">
+            <div class="user_card">
+                <div class="d-flex justify-content-center">
+                    <div class="brand_logo_container">
+                        <img src="img/logo.png"
+                            class="brand_logo bg-danger" alt="Logo">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center form_container">
+                    <form id="loginForm">
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">👤</span>
+                            </div>
+                            <input autofocus type="text" name="" required class="form-control input_user" id="username" value="" placeholder="username">
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    🗝️
+                                </span>
+                            </div>
+                            <input type="password" name="" required id="password" class="form-control input_pass" value=""
+                                placeholder="password">
+                        </div>
+                        
+                        <div class="d-flex justify-content-center mt-3 login_container">
+                            <button type="submit" name="button" class="btn login_btn">Login</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="mt-4 text-black text-center">
+                    Bikermart Indonesia
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+
+    <script>
+
+        // Detect client connection
+        $(document).ready(function(){$.ajax({type:"GET",data:{key:"Bikermart#2020"},contentType:"application/x-www-form-urlencoded",url:"https://api.bikermart.co.id/v1/qr/cekKoneksi",success:function(e){"ok"==e.status&&200==e.code&&"Bikermart#2020"==e.key?console.log("connected to server"):location.href="noNetwork.html"},error:function(){location.href="noNetwork.html"}})});
+
+        $(document).ready(function () {
+
+            // is session id available in localstorage?
+
+            var session_id = localStorage.getItem('bikermartApp_Session')
+
+            console.log(session_id);
+            
+
+            if(session_id == 'qZhchP5tsUX6sDVM93BUsp7') {
+                location.href="index.html"
+                console.log('berhasil login');
+            }
+
+            $('#loginForm').submit(function() {
+                var username = $('#username').val();
+                var password = $('#password').val();
+
+                if(!password && !username) {
+
+                    alert('Username dan password tidak boleh kosong!')
+
+                } else if(username == 'gudang' && password == 'bianggrosir') {
+                    alert('Berhasil login!')
+                    localStorage.setItem('bikermartApp_Session', 'qZhchP5tsUX6sDVM93BUsp7')
+                    location.href="index.html"
+                } else {
+                    alert('Tidak dapat menemukan akun, silahkan coba lagi')
+                }
+            })
+        });
+    </script>
+    
+</body>
+
+</html>

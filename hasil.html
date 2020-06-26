@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <meta name="theme-color" content="#343a40" />
+    <meta name="theme-color" content="#4285f4">
+    <link rel="stylesheet" href="css/scanner.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        #copyText, #copyText:hover, #copyText:active {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-3 border-right" id="menu">
+        <a class="nav-link text-dark" href="index.html">
+            Scannner
+        </a>
+
+        <a class="nav-link text-dark" href="hasil.html">
+            Hasil Scan
+        </a>
+
+        <a class="nav-link text-dark" href="cetak.html">
+            Cetak Hasil Scan
+        </a>
+
+        <a class="nav-link text-dark" id="tutupMenu" href="#">
+            Tutup Menu
+        </a>
+
+
+    </div>
+
+    <div class="bg-light" id="app">
+        <header>
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/logo.png" alt="logo" class="logo">
+                </a>
+                <button class="navbar-toggler" type="button" id="btnNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </nav>
+        </header>
+
+        <section class="container py-4 pb-5 text-center text-light shadow bg-dark">
+            <h4>Hasil Scan Barcode</h4>
+        </section>
+
+        <br>
+
+        <div class="container bg-light">
+
+            <input placeholder="Cari Data" class="form-control mb-3" id="cariData" type="text">
+
+            <div class="table-responsive">
+                <table class="table table-striped bg-light">
+                    <tr>
+                        <th>No</th>
+                        <th>No Pesanan</th>
+                        <th>Kurir</th>
+                        <th>Scan Pada</th>
+                    </tr>
+
+                    <tbody id="hasilnya">
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            <br>
+                <button id="backToTop" class="btn w-100 btn-light border">Ke Atas</button>
+            <br><br>
+
+            <input id="temp" hidden class="d-none" type="text">
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/my.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <script>
+        // Check authentication
+        $(function () {var session_id = localStorage.getItem('bikermartApp_Session');if(!session_id || session_id != 'qZhchP5tsUX6sDVM93BUsp7') {location.href="login.html"}});
+
+        // Cari Data
+        $(document).ready(function(){
+          $("#cariData").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#hasilnya tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+        });
+
+        // Back to top
+
+        $('#backToTop').click(function() {
+            $("html, body").animate({scrollTop: 0}, 500);
+        });
+
+        // Detect client connection
+        $(document).ready(function(){$.ajax({type:"GET",data:{key:"Bikermart#2020"},contentType:"application/x-www-form-urlencoded",url:"https://api.bikermart.co.id/v1/qr/cekKoneksi",success:function(e){"ok"==e.status&&200==e.code&&"Bikermart#2020"==e.key?console.log("connected to server"):location.href="noNetwork.html"},error:function(){location.href="noNetwork.html"}})});
+
+        // Load data
+
+        $.ajax({
+            type: "GET",
+            url: "https://api.bikermart.co.id/v1/qr/getAll",
+            data: {
+                key: "Bikermart#2020"
+            },
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (res) {
+                for (let i = 0; i < res.data.length; i++) {
+                    
+                    var htmlnya = `
+                        <tr>
+                            <td>`+ (i + 1) +`</td>
+                            <td> <a class="copyText" href="#copyText">`+ res.data[i].noPesanan +`</a></td>
+                            <td>`+ res.data[i].kurir +`</td>
+                            <td>`+ res.data[i].inputed_at +`</td>    
+                        </tr>
+                    `;
+
+                    $(htmlnya).appendTo('#hasilnya');
+
+                    $('.copyText').click(function() {
+
+                        $('#temp').val($(this).text());
+
+                        /* Get the text field */
+                        var copyText = document.getElementById("temp");
+                        
+                        /* Select the text field */
+                        copyText.select();
+                        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+                                            
+                        /* Copy the text inside the text field */
+                        document.execCommand("copy");
+                                            
+                        /* Alert the copied text */
+                        console.log("Berhasil menyalin nomor pesanan " + copyText.value);
+                    })
+
+                    
+                }
+            }
+        });
+    </script>
+
+    
+</body>
+
+</html>
