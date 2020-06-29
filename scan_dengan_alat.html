@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <meta name="theme-color" content="#343a40" />
+    <meta name="theme-color" content="#4285f4">
+    <link rel="stylesheet" href="css/scanner.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/material.css">
+    <style>
+        #copyText, #copyText:hover, #copyText:active {
+            text-decoration: none;
+        }
+
+        .loading {
+            height: 100vh;
+            width: 100%;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            z-index: 99999999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-3 border-right" id="menu">
+        <a class="nav-link text-dark" href="index.html">
+            Scannner
+        </a>
+
+        <a class="nav-link text-dark" href="scan_dengan_alat.html">
+            Scannner dengan alat
+        </a>
+
+        <a class="nav-link text-dark" href="hasil.html">
+            Hasil Scan
+        </a>
+
+        <a class="nav-link text-dark" href="cetak.html">
+            Cetak Hasil Scan
+        </a>
+
+        <a class="nav-link text-dark" id="tutupMenu" href="#">
+            Tutup Menu
+        </a>
+
+
+    </div>
+
+    <div class="bg-light" id="app">
+
+        <div class="loading container bg-light">
+            <img src="img/loading.gif" style="width: 90px;" alt="">
+        </div>
+
+        <header>
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/logo.png" alt="logo" class="logo">
+                </a>
+                <button class="navbar-toggler" type="button" id="btnNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </nav>
+        </header>
+        
+        <div class="container mt-3">
+
+            <div id="notifSukses" class="alert alert-success mt-2">
+                <small>
+                    
+                </small>
+            </div>
+
+            <div id="notifikasi" class="alert alert-warning">
+                <small>
+                    Harap pilih kurir terlebih dahulu sebelum memasukan nomor resi, tekan untuk menutup ini
+                </small>
+            </div>
+
+            <div id="error_resi_kurir" class="alert alert-warning">
+                <small>
+                    Error! Nomor resi atau nama kurir harus diisi! 
+                </small>
+            </div>
+
+            <div id="error_already_data" class="alert alert-warning mt-2">
+                <small>
+                    
+                </small>
+            </div>
+
+            <div id="other_error" class="alert alert-danger mt-2">
+                <small>
+                    Terjadi kesalahan pada sistem, silahkan coba lagi!
+                </small>
+            </div>
+
+            <h4>Riwayat Scaning</h4>
+
+            <div class="table-responsive mt-4">
+                <table class="table">
+                    <tr>
+                        <td>No Resi</td>
+                        <td>Kurir</td>
+                        <td>Status</td>
+                    </tr>
+
+                    <tbody id="hasilScannya">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container fixed-bottom bg-light border-top py-3">
+            <div class="row">
+                <div class="col-8">
+                    <input class="form-control" autofocus placeholder="No Resi" id="noResi" type="text">
+                </div>
+
+                <div class="col pl-0">
+                    <select name="kurir" id="kurir" class="custom-select">
+                        <option selected value="null">Pilih Kurir</option>
+                        <option value="POS Indonesia">POS Indonesia</option>
+                        <option value="Sicepat">Sicepat</option>
+                        <option value="JNE">JNE</option>
+                        <option value="J&T">J&T</option>
+                        <option value="Tiki">Tiki</option>
+                        <option value="JVL">JVL</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/my.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/ej2.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $('.loading').hide()
+
+            $('#noResi').focus()
+
+            setInterval(() => {
+                $('#notifikasi').hide()
+            }, 4000);
+        });
+
+        $('#error_resi_kurir').hide()
+
+        $('#notifikasi').click(function() {
+            $(this).hide()
+        })
+
+            $('#kurir').change(function (e) { 
+                e.preventDefault();
+                $('#noResi').focus()
+            });
+                // Scan
+
+                $('#noResi').on('change', function (e) {
+                    console.log($('#noResi').val());
+                    $('.loading').show()
+
+                    $.ajax({
+                        url: "https://api.bikermart.co.id/v1/qr/scan",
+                        type: 'GET',
+                        data: {
+                            kurir: $('#kurir').val(),
+                            noPesanan: $('#noResi').val(),
+                            key: "Bikermart#2020"
+                        },
+                        dataType: 'json',
+                        contentType: 'application/x-www-form-urlencoded',
+                        success: function (result) {
+                            $('.loading').hide()
+
+                            if(result.status == 'ok') {
+                                $('#notifSukses').show();
+                                $('#notifSukses small').text("No resi " + $('#noResi').val() + ' dengan kurir '+ $('#kurir').val() +' berhasil disimpan')
+
+                                var html_ok = `
+                                    <tr>
+                                        <td> `+ $('#noResi').val() +`</td>
+                                        <td> `+ $('#kurir').val() +`</td>
+                                        <td> Ok </td>
+                                    </tr>
+                                `
+
+                                $(html_ok).appendTo('#hasilScannya');
+
+                            } else if(result.status == 'error_already_data') {
+
+                                $('#error_already_data').show();
+                                $('#error_already_data small').text(result.data);
+
+                                var html_error = `
+                                    <tr>
+                                        <td> `+ $('#noResi').val() +`</td>
+                                        <td> `+ $('#kurir').val() +`</td>
+                                        <td> Error! Already data </td>
+                                    </tr>
+                                `
+
+                                $(html_error).appendTo('#hasilScannya');
+
+                            } else if(result.status == 'error_field') {
+                                // $('#error_already_data').show();
+                                // $('#error_already_data small').text(result.data);
+
+                                $('#error_resi_kurir').show()
+
+                                var html_error_field = `
+                                    <tr>
+                                        <td> `+ $('#noResi').val() +`</td>
+                                        <td> `+ $('#kurir').val() +`</td>
+                                        <td> Error! Nomor resi atau nama kurir harus diisi!  </td>
+                                    </tr>
+                                `
+
+                            $(html_error_field).appendTo('#hasilScannya');
+
+                            } else {
+                                $('#other_error').show();
+                            }
+
+                            setTimeout(() => {
+                                $('#notifSukses').hide();
+                                $('#error_already_data').hide();
+                                $('#other_error').hide();
+                                $('#error_resi_kurir').hide()
+                            }, 3000);
+
+                        //    console.log(result);
+                          console.log(result.status);
+
+                          $('#noResi').val('')
+                        },
+                        error: function (error) {
+                            console.error(error);
+                            $('#noResi').val('')
+                            $('.loading').hide()
+
+                            var html_error_other = `
+                                    <tr>
+                                        <td> `+ $('#noResi').val() +`</td>
+                                        <td> `+ $('#kurir').val() +`</td>
+                                        <td> Error tidak diketahui </td>
+                                    </tr>
+                                `
+
+                            $(html_error_other).appendTo('#hasilScannya');
+                        }
+                    });
+
+                });
+
+        // Check authentication
+        $(function () {var session_id = localStorage.getItem('bikermartApp_Session');if(!session_id || session_id != 'qZhchP5tsUX6sDVM93BUsp7') {location.href="login.html"}});
+
+        // Detect client connection
+        $(document).ready(function(){$.ajax({type:"GET",data:{key:"Bikermart#2020"},contentType:"application/x-www-form-urlencoded",url:"https://api.bikermart.co.id/v1/qr/cekKoneksi",success:function(e){"ok"==e.status&&200==e.code&&"Bikermart#2020"==e.key?console.log("connected to server"):location.href="noNetwork.html"},error:function(){location.href="noNetwork.html"}})});
+
+    </script>
+
+    
+</body>
+
+</html>
